@@ -95,7 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "value",
                               style: new TextStyle(fontSize: 15.0),
-                            )),
+                            )
+                        ),
                       ],
                   )
                 ),
@@ -118,7 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                               "value",
                               style: new TextStyle(fontSize: 15.0),
-                            )),
+                            )
+                        ),
                       ],
                     )
                 ),
