@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -44,16 +47,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String latestTemp = "";
+  String latestHum = "";
+  String latestDate = "";
+  String latestHour = "";
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
+  Future<Null> refresh() async{
+    final response = await http.get(
+                        'https://api.thingspeak.com/channels/902485/feeds.json?api_key=RBAIUDWXB1U2PAO7&results=1');
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      var resp = json.decode(response.body);
+      var feeds = resp["feeds"];
+      latestTemp = feeds[0]["field1"];
+      latestHum = feeds[0]["field2"];
+      var latestRecognition = feeds[0]["created_at"];
+      latestDate = latestRecognition.substring(0, 10);
+      latestHour = latestRecognition.substring(11, 19);
     });
   }
 
@@ -93,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "value",
+                              latestTemp,
                               style: new TextStyle(fontSize: 15.0),
                             )
                         ),
@@ -117,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              "value",
+                              latestHum,
                               style: new TextStyle(fontSize: 15.0),
                             )
                         ),
@@ -129,10 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
+            child: Text("Latest recognition: "+latestDate+" at "+latestHour),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: RaisedButton(
               child: Text("Refresh"),
               onPressed: () {
-
+                  refresh();
               },
             ),
           ),
