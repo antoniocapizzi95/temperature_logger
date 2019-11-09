@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'logger.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Temperature Logger',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -47,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   String latestTemp = "";
   String latestHum = "";
   String latestDate = "";
@@ -69,6 +71,22 @@ class _MyHomePageState extends State<MyHomePage> {
       var latestRecognition = feeds[0]["created_at"];
       latestDate = latestRecognition.substring(0, 10);
       latestHour = latestRecognition.substring(11, 19);
+    });
+  }
+
+  int selectedIndex = 0;
+  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+
+
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+      if(selectedIndex == 1){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Logger()),
+        );
+      }
     });
   }
 
@@ -157,11 +175,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), */ // This trailing comma makes auto-formatting nicer for build methods.
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            title: Text('Logger'),
+          ),
+
+        ],
+        currentIndex: selectedIndex,
+        selectedItemColor: Colors.blue[800],
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
