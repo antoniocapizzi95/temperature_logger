@@ -15,6 +15,8 @@ class _LoggerState extends State<Logger> {
 
   DateTime selectedDate = DateTime.now();
 
+  List<Map> data = List();
+
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -24,6 +26,7 @@ class _LoggerState extends State<Logger> {
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
+        this.getData("2019-11-09");
       });
   }
 
@@ -35,8 +38,28 @@ class _LoggerState extends State<Logger> {
           context,
           MaterialPageRoute(builder: (context) => MyHomePage(title: 'Temperature Logger')),
         );
-        //Navigator.pop(context);
       }
+    });
+  }
+
+  Future<Null> getData(String datePicked) async{
+    final response = await http.get(
+        'https://api.thingspeak.com/channels/902485/feeds.json?api_key=RBAIUDWXB1U2PAO7');
+    setState(() {
+      var resp = json.decode(response.body);
+      var feeds = resp["feeds"];
+      if(data.isNotEmpty) {
+        data.clear();
+      }
+      for(var elem in feeds) {
+        var d = elem["created_at"];
+        d = d.substring(0, 10);
+        if(d == datePicked) {
+          data.add(elem);
+        }
+      }
+
+      
     });
   }
 
@@ -54,7 +77,8 @@ class _LoggerState extends State<Logger> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("${selectedDate.toLocal()}"),
+                  //Text("${selectedDate.toLocal()}"),
+                  Text("Selected date: "+selectedDate.toString().substring(0, 10)),
                   SizedBox(height: 20.0,),
                   RaisedButton(
                     onPressed: () => _selectDate(context),
