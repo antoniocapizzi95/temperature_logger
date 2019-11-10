@@ -17,16 +17,22 @@ class _LoggerState extends State<Logger> {
 
   List<Map> data = List();
 
+  @override
+  void initState() {
+    getData(selectedDate.toString().substring(0, 10));
+    super.initState();
+  }
+
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        firstDate: DateTime(2019, 11),
+        lastDate: DateTime.now());
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
-        this.getData("2019-11-09");
+        this.getData(selectedDate.toString().substring(0, 10));
       });
   }
 
@@ -59,7 +65,7 @@ class _LoggerState extends State<Logger> {
         }
       }
 
-      
+
     });
   }
 
@@ -87,10 +93,54 @@ class _LoggerState extends State<Logger> {
                 ],
               ),
           ),
-          Padding(
+
+
+          Expanded(
+            child: ListView(
+                children: <Widget>[
+                  SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: Text("Hour")),
+                          DataColumn(label: Text("Temperature")),
+                          DataColumn(label: Text("Humidity"))
+                        ],
+                        rows: data.map(
+                          ((element) => DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text(element["created_at"].substring(11, 19))), //Extracting from Map element the value
+                              DataCell(Text(element["field1"])),
+                              DataCell(Text(element["field2"])),
+                            ],
+                          )),
+                        ).toList(),
+                      ),
+                  )
+                ]
+            ),
+          )
+
+
+          /*Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("table")
-          ),
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text("Hour")),
+                  DataColumn(label: Text("Temperature")),
+                  DataColumn(label: Text("Humidity"))
+                ],
+                rows: data.map(
+                    ((element) => DataRow(
+                        cells: <DataCell>[
+                            DataCell(Text(element["created_at"].substring(11, 19))), //Extracting from Map element the value
+                            DataCell(Text(element["field1"])),
+                            DataCell(Text(element["field2"])),
+                          ],
+                      )),
+                ).toList(),
+              ),
+          ),*/
 
         ],
       ),
