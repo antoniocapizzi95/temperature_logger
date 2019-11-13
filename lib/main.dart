@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              latestTemp,
+                              latestTemp+" °C",
                               style: new TextStyle(fontSize: 15.0),
                             )
                         ),
@@ -150,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              latestHum,
+                              latestHum+" %",
                               style: new TextStyle(fontSize: 15.0),
                             )
                         ),
