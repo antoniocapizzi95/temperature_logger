@@ -102,7 +102,7 @@ class _LoggerState extends State<Logger> {
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
                         columns: [
-                          DataColumn(label: Text("Hour")),
+                          DataColumn(label: Text("Time")),
                           DataColumn(label: Text("Temperature")),
                           DataColumn(label: Text("Humidity"))
                         ],
