@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
-import 'logger.dart';
+import 'package:flutter/material.dart'; //library for material design in flutter
+import 'package:http/http.dart' as http; //library to make http requests
+import 'dart:async'; //library to do async functions
+import 'dart:convert'; //library to convert data structures in flutter
+import 'logger.dart'; //logger page imported
 
 void main() => runApp(MyApp());
 
@@ -49,24 +49,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  String latestTemp = "";
-  String latestHum = "";
-  String latestDate = "";
-  String latestHour = "";
+  String latestTemp = ""; //global variable used to get latest temperature detected
+  String latestHum = ""; //global variable used to get latest humidity detected
+  String latestDate = ""; //global variable used to get latest recognition date
+  String latestHour = ""; //global variable used to get latest recognition time
 
   @override
-  void initState() {
+  void initState() { //function executed at start of this widget
     refresh();
     super.initState();
   }
 
-  Future<Null> refresh() async{
+  Future<Null> refresh() async { //function that get information from cloud service and update variables in this application
     final response = await http.get(
-                        'https://api.thingspeak.com/channels/902485/feeds.json?api_key=RBAIUDWXB1U2PAO7&results=1');
-    setState(() {
-      var resp = json.decode(response.body);
+                        'https://api.thingspeak.com/channels/902485/feeds.json?api_key=RBAIUDWXB1U2PAO7&results=1'); //http request to get latest values from cloud service
+    setState(() { //updating state and variables
+      var resp = json.decode(response.body); //transforming json object
       var feeds = resp["feeds"];
-      latestTemp = feeds[0]["field1"];
+      latestTemp = feeds[0]["field1"]; //updating variables
       latestHum = feeds[0]["field2"];
       var latestRecognition = feeds[0]["created_at"];
       latestDate = latestRecognition.substring(0, 10);
@@ -74,11 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  int selectedIndex = 0;
+  int selectedIndex = 0; //variables used for bottom navigation bar
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) { //actions executed when bottom navigation bar is tapped
     setState(() {
       selectedIndex = index;
       if(selectedIndex == 1){
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //this is the graphical part
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Card(
+                child: Card( //Widget used to show latest temperature detected
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -136,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Card(
+                child: Card( //Widget used to show latest humidity detected
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -162,20 +162,20 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text("Latest recognition: "+latestDate+" at "+latestHour),
+            child: Text("Latest recognition: "+latestDate+" at "+latestHour), //here latest date and time is shown
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: RaisedButton(
               child: Text("Refresh"),
               onPressed: () {
-                  refresh();
+                  refresh(); //refresh button call refresh function
               },
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar( //this is the navigation bar in the bottom of application
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

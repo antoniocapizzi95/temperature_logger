@@ -4,26 +4,26 @@ import 'dart:async';
 import 'dart:convert';
 import 'main.dart';
 
-class Logger extends StatefulWidget {
+class Logger extends StatefulWidget { //logger is a stateful widget as homepage
 
   @override
-  _LoggerState createState() => _LoggerState();
+  _LoggerState createState() => _LoggerState(); //usual declaration of a stateful widget
 }
 
 class _LoggerState extends State<Logger> {
-  int selectedIndex = 1;
+  int selectedIndex = 1; //variable used in bottom navigation bar (as homepage)
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now(); //get current time and date
 
-  List<Map> data = List();
+  List<Map> data = List(); //declare a list of maps (used to get the json file from cloud service)
 
   @override
-  void initState() {
-    getData(selectedDate.toString().substring(0, 10));
+  void initState() { //actions exectued at the start of this widget
+    getData(selectedDate.toString().substring(0, 10)); //function that get data from cloud services
     super.initState();
   }
 
-  Future<Null> _selectDate(BuildContext context) async {
+  Future<Null> _selectDate(BuildContext context) async { //function used to get date from datepicker
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
@@ -36,7 +36,7 @@ class _LoggerState extends State<Logger> {
       });
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) { //function used to change view in bottom navigation bar
     setState(() {
       selectedIndex = index;
       if(selectedIndex == 0){
@@ -48,24 +48,22 @@ class _LoggerState extends State<Logger> {
     });
   }
 
-  Future<Null> getData(String datePicked) async{
+  Future<Null> getData(String datePicked) async { //function used to get data from cloud service
     final response = await http.get(
         'https://api.thingspeak.com/channels/902485/feeds.json?api_key=RBAIUDWXB1U2PAO7');
     setState(() {
-      var resp = json.decode(response.body);
+      var resp = json.decode(response.body); //get a json object
       var feeds = resp["feeds"];
       if(data.isNotEmpty) {
         data.clear();
       }
-      for(var elem in feeds) {
+      for(var elem in feeds) { //transforming and filtering json object
         var d = elem["created_at"];
         d = d.substring(0, 10);
-        if(d == datePicked) {
+        if(d == datePicked) { //filtering data according to selected date
           data.add(elem);
         }
       }
-
-
     });
   }
 
@@ -83,24 +81,22 @@ class _LoggerState extends State<Logger> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  //Text("${selectedDate.toLocal()}"),
-                  Text("Selected date: "+selectedDate.toString().substring(0, 10)),
+                  Text("Selected date: "+selectedDate.toString().substring(0, 10)), //showing selected date from datepicker
                   SizedBox(height: 20.0,),
                   RaisedButton(
                     onPressed: () => _selectDate(context),
-                    child: Text('Select date'),
+                    child: Text('Select date'), //button to confirm date selection
                   ),
                 ],
               ),
           ),
-
 
           Expanded(
             child: ListView(
                 children: <Widget>[
                   SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: DataTable(
+                      child: DataTable( //table used to show the data according to selected date
                         columns: [
                           DataColumn(label: Text("Time")),
                           DataColumn(label: Text("Temperature")),
@@ -121,30 +117,9 @@ class _LoggerState extends State<Logger> {
             ),
           )
 
-
-          /*Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text("Hour")),
-                  DataColumn(label: Text("Temperature")),
-                  DataColumn(label: Text("Humidity"))
-                ],
-                rows: data.map(
-                    ((element) => DataRow(
-                        cells: <DataCell>[
-                            DataCell(Text(element["created_at"].substring(11, 19))), //Extracting from Map element the value
-                            DataCell(Text(element["field1"])),
-                            DataCell(Text(element["field2"])),
-                          ],
-                      )),
-                ).toList(),
-              ),
-          ),*/
-
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar( //this is the navigation bar in the bottom of application
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
